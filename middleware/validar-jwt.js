@@ -1,3 +1,5 @@
+/*jshint esversion: 9 */
+/* jshint -W033 */
 const jwt = require('jsonwebtoken');
 
 const validarJWT = (req, res, next) => {
@@ -15,7 +17,8 @@ const validarJWT = (req, res, next) => {
 
     try {
         const { uid } = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(uid);
+        req.uid = uid;
+        next();
     } catch (error) {
         return res.status(401).json({
             ok: false,
@@ -24,7 +27,7 @@ const validarJWT = (req, res, next) => {
     }
 
 
-    next();
+
 }
 
 module.exports = {

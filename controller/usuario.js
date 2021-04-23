@@ -1,3 +1,5 @@
+/*jshint esversion: 9 */
+/* jshint -W033 */
 const { response, json } = require('express');
 const bcrypt = require('bcryptjs');
 const { validationResult } = require('express-validator');
@@ -5,11 +7,23 @@ const Usuario = require('../models/usuario');
 const { generarJWT } = require('../helper/jwt');
 
 const getUsuario = async(req, res) => {
+    const desde = Number(req.query.desde) || 0;
+    console.log("desde " + desde);
 
-    const usuarios = await Usuario.find({}, 'nombre email role google');
+    // const usuarios = await Usuario.find({}, 'nombre email role google').skip(desde).limit(5);
+
+    //const total= await Usuario.count();
+
+    const [usuarios, total] = await Promise.all([
+        Usuario.find({}, 'nombre email role google img').skip(desde).limit(5),
+
+        Usuario.count()
+    ]);
+
     res.json({
         ok: true,
-        usuarios
+        usuarios,
+        total
     });
 }
 
